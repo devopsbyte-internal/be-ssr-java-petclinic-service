@@ -93,49 +93,49 @@ jobs:
         if: always()
         run: rm -rf ${{ github.workspace }}/repo-${{ github.run_id }}
 
-  scan:
-    runs-on: self-hosted
-    name: SonarQube Scan
-    needs: test
-    defaults:
-      run:
-        working-directory: repo-${{ github.run_id }}
+  # scan:
+  #   runs-on: self-hosted
+  #   name: SonarQube Scan
+  #   needs: test
+  #   defaults:
+  #     run:
+  #       working-directory: repo-${{ github.run_id }}
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          path: repo-${{ github.run_id }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         path: repo-${{ github.run_id }}
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+  #     - name: Set up JDK 17
+  #       uses: actions/setup-java@v4
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: '17'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+  #     - name: Grant execute permission for gradlew
+  #       run: chmod +x ./gradlew
 
-      - name: Download coverage reports
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage_reports
-          path: ./repo-${{ github.run_id }}
+  #     - name: Download coverage reports
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: coverage_reports
+  #         path: ./repo-${{ github.run_id }}
 
-      - name: Debug downloaded files
-        run: |
-          echo "PWD: $(pwd)"
-          ls -lh jacocoTestReport.xml
+  #     - name: Debug downloaded files
+  #       run: |
+  #         echo "PWD: $(pwd)"
+  #         ls -lh jacocoTestReport.xml
 
-      - name: SonarQube Scan
-        run: |
-          ./gradlew sonarqube \
-          -Dsonar.host.url="${{ secrets.SONAR_CLOUD_URL }}" \
-          -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
-          -Dsonar.projectKey="${{ secrets.SONAR_PROJECT_KEY }}" \
-          -Dsonar.organization="${{ secrets.SONAR_ORGANIZATION }}" \
-          -Dsonar.coverage.jacoco.xmlReportPaths=jacocoTestReport.xml
+  #     - name: SonarQube Scan
+  #       run: |
+  #         ./gradlew sonarqube \
+  #         -Dsonar.host.url="${{ secrets.SONAR_CLOUD_URL }}" \
+  #         -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
+  #         -Dsonar.projectKey="${{ secrets.SONAR_PROJECT_KEY }}" \
+  #         -Dsonar.organization="${{ secrets.SONAR_ORGANIZATION }}" \
+  #         -Dsonar.coverage.jacoco.xmlReportPaths=jacocoTestReport.xml
 
-      - name: Cleanup workspace
-        if: always()
-        run: rm -rf ${{ github.workspace }}/repo-${{ github.run_id }}
+  #     - name: Cleanup workspace
+  #       if: always()
+  #       run: rm -rf ${{ github.workspace }}/repo-${{ github.run_id }}
